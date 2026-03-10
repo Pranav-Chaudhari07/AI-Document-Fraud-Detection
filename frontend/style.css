@@ -322,7 +322,7 @@ main {
     }
 }
 
-/* Footer responsive */
+
 @media (max-width: 768px) {
     .footer-container {
         grid-template-columns: 1fr;

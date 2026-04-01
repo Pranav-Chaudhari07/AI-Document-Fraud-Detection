@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocSecure - Upload Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        
+        .upload-page {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+
+        .back-link svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+        }
+
+        
+        .upload-container {
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            background: rgba(13, 31, 54, 0.4);
+            transition: border-color 0.3s ease;
+        }
+
+        .upload-container:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+       
+        .drop-zone {
+            border: 2px dashed rgba(148, 163, 184, 0.3);
+            border-radius: 12px;
+            padding: 4rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.drag-over {
+            border-color: var(--blue-bright);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .drop-zone.drag-over {
+            transform: scale(1.01);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Upload Icon */
+        .upload-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .upload-icon svg {
+            width: 48px;
+            height: 48px;
+            stroke: var(--text-secondary);
+            stroke-width: 1.5;
+            fill: none;
+            transition: stroke 0.3s ease, transform 0.3s ease;
+        }
+
+        .drop-zone:hover .upload-icon svg {
+            stroke: var(--text-primary);
+            transform: translateY(-4px);
+        }
+
+        /* Text */
+        .drop-zone-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .drop-zone-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Select File Button */
+        .select-file-btn {
+            background: var(--blue-bright);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.8rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .select-file-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+        }
+
+        .select-file-btn:active {
+            transform: translateY(0);
+        }
+
+        /* File Selected State */
+        .file-info {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem 1.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .file-info.visible {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideUp 0.3s ease;
+        }
+
+        .file-info-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .file-info-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-info-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-info-size {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .file-remove-btn {
+            background: transparent;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .file-remove-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+
+        /* Analyze Button */
+        .analyze-btn {
+            display: none;
+            margin-top: 1.5rem;
+            width: 100%;
+            background: linear-gradient(135deg, var(--blue-bright), #2563eb);
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .analyze-btn.visible {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .analyze-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .analyze-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* ═══════════════════════════════════════════════
+           LOADING STATE
+           ═══════════════════════════════════════════════ */
+        .loading-overlay {
+            display: none;
+            margin-top: 2rem;
+            text-align: center;
+            padding: 3rem 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: rgba(13, 31, 54, 0.6);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .loading-overlay.visible {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(59, 130, 246, 0.15);
+            border-top-color: var(--blue-bright);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════
+           RESULTS SECTION
+           ═══════════════════════════════════════════════ */
+        .results-container {
+            display: none;
+            margin-top: 2rem;
+            animation: slideUp 0.5s ease;
+        }
+
+        .results-container.visible {
+            display: block;
+        }
+
+        .result-card {
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card.real {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.15));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .result-card.fake {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(220, 38, 38, 0.15));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Glow effect behind card */
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            border-radius: 50%;
+            opacity: 0.04;
+            pointer-events: none;
+        }
+
+        .result-card.real::before {
+            background: radial-gradient(circle, #10b981, transparent 60%);
+        }
+
+        .result-card.fake::before {
+            background: radial-gradient(circle, #ef4444, transparent 60%);
+        }
+
+        /* Verdict Badge */
+        .verdict-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .verdict-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .result-card.real .verdict-icon {
+            background: rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+        }
+
+        .result-card.fake .verdict-icon {
+            background: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
+        }
+
+        .verdict-label {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .result-card.real .verdict-label {
+            color: #10b981;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .result-card.fake .verdict-label {
+            color: #ef4444;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            80% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Confidence Ring */
+        .confidence-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .confidence-ring-wrap {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        .confidence-ring {
+            width: 140px;
+            height: 140px;
+            transform: rotate(-90deg);
+        }
+
+        .confidence-ring circle {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+        .confidence-ring .ring-bg {
+            stroke: rgba(148, 163, 184, 0.1);
+        }
+
+        .confidence-ring .ring-fg {
+            stroke-dasharray: 408;
+            stroke-dashoffset: 408;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .result-card.real .ring-fg {
+            stroke: #10b981;
+            filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.4));
+        }
+
+        .result-card.fake .ring-fg {
+            stroke: #ef4444;
+            filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.4));
+        }
+
+        .confidence-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .confidence-pct {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .confidence-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* Detail Stats */
+        .detail-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            text-align: center;
+        }
+
+        .stat-box-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-box-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Image Preview */
+        .preview-section {
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+            padding-top: 1.5rem;
+        }
+
+        .preview-title {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            object-fit: contain;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Scan Again Button */
+        .scan-again-btn {
+            margin-top: 1.5rem;
+            width: 100%;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 0.85rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .scan-again-btn:hover {
+            border-color: var(--blue-bright);
+            background: rgba(59, 130, 246, 0.08);
+            transform: translateY(-2px);
+        }
+
+        /* Error State */
+        .error-container {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        .error-container.visible {
+            display: block;
+        }
+
+        .error-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .error-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ef4444;
+            margin-bottom: 0.5rem;
+        }
+
+        .error-msg {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .retry-btn {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .upload-page {
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .upload-page {
+                padding: 1rem;
+            }
+
+            .drop-zone {
+                padding: 3rem 1.5rem;
+            }
+
+            .upload-container {
+                padding: 1rem;
+            }
+
+            .result-card {
+                padding: 1.5rem;
+            }
+
+            .confidence-section {
+                gap: 1.5rem;
+            }
+
+            .verdict-label {
+                font-size: 1.5rem;
+            }
+
+            .detail-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="logo">
+            <div class="logo-icon">◇</div>
+            <span>DocSecure</span>
+        </a>
+        <nav>
+            <a href="#results">Results</a>
+            <a href="#admin">Admin</a>
+        </nav>
+    </header>
+
+    <!-- Upload Page Content -->
+    <main>
+        <div class="upload-page">
+
+            <!-- Back Link -->
+            <a href="index.html" class="back-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                Back
+            </a>
+
+            <!-- Upload Container -->
+            <div class="upload-container" id="uploadSection">
+
+                <!-- Drop Zone -->
+                <div class="drop-zone" id="dropZone">
+
+                    <!-- Upload Arrow Icon -->
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+
+                    <p class="drop-zone-title">Drop your document here</p>
+                    <p class="drop-zone-subtitle">or click to browse. Supports images (JPG, PNG, BMP, TIFF, WebP)</p>
+
+                    <button class="select-file-btn" id="selectFileBtn">Select File</button>
+
+                    <!-- Hidden file input -->
+                    <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.bmp,.tiff,.webp" style="display:none;">
+                </div>
+
+                <!-- File Info (shown after selection) -->
+                <div class="file-info" id="fileInfo">
+                    <div class="file-info-icon">📄</div>
+                    <div class="file-info-details">
+                        <div class="file-info-name" id="fileName">document.pdf</div>
+                        <div class="file-info-size" id="fileSize">2.4 MB</div>
+                    </div>
+                    <button class="file-remove-btn" id="removeFileBtn" title="Remove file">✕</button>
+                </div>
+
+                <!-- Analyze Button -->
+                <button class="analyze-btn" id="analyzeBtn">🔍 Analyze Document</button>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Analyzing Document…</p>
+                <p class="loading-subtext">Running AI-powered fraud detection on your certificate</p>
+            </div>
+
+            <!-- Error State -->
+            <div class="error-container" id="errorContainer">
+                <div class="error-icon">⚠️</div>
+                <p class="error-title" id="errorTitle">Analysis Failed</p>
+                <p class="error-msg" id="errorMsg">Could not connect to the analysis server.</p>
+                <button class="retry-btn" id="retryBtn">Try Again</button>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-container" id="resultsContainer">
+                <div class="result-card" id="resultCard">
+
+                    <!-- Verdict -->
+                    <div class="verdict-row">
+                        <div class="verdict-icon" id="verdictIcon">✅</div>
+                        <div class="verdict-label" id="verdictLabel">REAL</div>
+                    </div>
+
+                    <!-- Confidence Ring + Stats -->
+                    <div class="confidence-section">
+                        <div class="confidence-ring-wrap">
+                            <svg class="confidence-ring" viewBox="0 0 140 140">
+                                <circle class="ring-bg" cx="70" cy="70" r="65" />
+                                <circle class="ring-fg" id="ringFg" cx="70" cy="70" r="65" />
+                            </svg>
+                            <div class="confidence-value">
+                                <div class="confidence-pct" id="confidencePct">0%</div>
+                                <div class="confidence-label">Confidence</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-stats">
+                            <div class="stat-box">
+                                <div class="stat-box-label">Risk Level</div>
+                                <div class="stat-box-value" id="riskLevel">—</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-box-label">Model Score</div>
+                                <div class="stat-box-value" id="modelScore">—</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-box-label">Verdict</div>
+                                <div class="stat-box-value" id="verdictText">—</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-box-label">File</div>
+                                <div class="stat-box-value" id="resultFileName"
+                                    style="font-size:0.85rem; word-break:break-all;">—</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="preview-section">
+                        <p class="preview-title">Scanned Document</p>
+                        <img class="preview-img" id="previewImg" alt="Scanned document preview">
+                    </div>
+                </div>
+
+                <!-- Scan Again -->
+                <button class="scan-again-btn" id="scanAgainBtn">
+                    🔄 Scan Another Document
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // ── Config ──────────────────────────────────────
+        const API_URL = 'http://127.0.0.1:5000/predict';
+
+        // ── DOM Elements ────────────────────────────────
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const selectFileBtn = document.getElementById('selectFileBtn');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFileBtn = document.getElementById('removeFileBtn');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const uploadSection = document.getElementById('uploadSection');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorContainer = document.getElementById('errorContainer');
+        const errorTitle = document.getElementById('errorTitle');
+        const errorMsg = document.getElementById('errorMsg');
+        const retryBtn = document.getElementById('retryBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultCard = document.getElementById('resultCard');
+        const verdictIcon = document.getElementById('verdictIcon');
+        const verdictLabel = document.getElementById('verdictLabel');
+        const ringFg = document.getElementById('ringFg');
+        const confidencePct = document.getElementById('confidencePct');
+        const riskLevel = document.getElementById('riskLevel');
+        const modelScore = document.getElementById('modelScore');
+        const verdictText = document.getElementById('verdictText');
+        const resultFileName = document.getElementById('resultFileName');
+        const previewImg = document.getElementById('previewImg');
+        const scanAgainBtn = document.getElementById('scanAgainBtn');
+
+        let selectedFile = null;
+
+        // ── File Selection ──────────────────────────────
+        selectFileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        // Drag & drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            selectedFile = file;
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+
+            const icon = fileInfo.querySelector('.file-info-icon');
+            icon.textContent = file.type.startsWith('image/') ? '🖼️' : '📎';
+
+            fileInfo.classList.add('visible');
+            analyzeBtn.classList.add('visible');
+        }
+
+        removeFileBtn.addEventListener('click', () => {
+            selectedFile = null;
+            fileInput.value = '';
+            fileInfo.classList.remove('visible');
+            analyzeBtn.classList.remove('visible');
+        });
+
+        // ── Analyze ─────────────────────────────────────
+        analyzeBtn.addEventListener('click', () => {
+            if (!selectedFile) return;
+            analyzeDocument(selectedFile);
+        });
+
+        retryBtn.addEventListener('click', () => {
+            errorContainer.classList.remove('visible');
+            if (selectedFile) analyzeDocument(selectedFile);
+        });
+
+        scanAgainBtn.addEventListener('click', resetUI);
+
+        async function analyzeDocument(file) {
+            // Show loading, hide others
+            uploadSection.style.display = 'none';
+            resultsContainer.classList.remove('visible');
+            errorContainer.classList.remove('visible');
+            loadingOverlay.classList.add('visible');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Server returned an error.');
+                }
+
+                // Hide loading
+                loadingOverlay.classList.remove('visible');
+
+                // Show results
+                showResults(data, file);
+
+            } catch (err) {
+                loadingOverlay.classList.remove('visible');
+                showError(err.message);
+            }
+        }
+
+        // ── Display Results ─────────────────────────────
+        function showResults(data, file) {
+            const isReal = data.label === 'REAL';
+            const conf = Math.round(data.confidence * 100);
+
+            // Card color
+            resultCard.className = 'result-card ' + (isReal ? 'real' : 'fake');
+
+            // Verdict
+            verdictIcon.textContent = isReal ? '✅' : '❌';
+            verdictLabel.textContent = data.label;
+
+            // Animate confidence ring
+            const circumference = 2 * Math.PI * 65; // r=65
+            const offset = circumference - (data.confidence * circumference);
+            ringFg.style.strokeDashoffset = circumference; // reset
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    ringFg.style.strokeDashoffset = offset;
+                });
+            });
+
+            // Animate confidence percentage
+            animateCounter(confidencePct, 0, conf, 1200);
+
+            // Stats
+            riskLevel.textContent = data.risk_level;
+            modelScore.textContent = data.probability.toFixed(4);
+            verdictText.textContent = isReal ? 'Authentic' : 'Fraudulent';
+            resultFileName.textContent = data.filename;
+
+            // Color the risk level
+            riskLevel.style.color = data.confidence >= 0.9 ? (isReal ? '#10b981' : '#ef4444') :
+                data.confidence >= 0.7 ? '#f59e0b' : '#94a3b8';
+
+            // Image preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            resultsContainer.classList.add('visible');
+        }
+
+        function animateCounter(el, from, to, duration) {
+            const start = performance.now();
+            function tick(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+                const current = Math.round(from + (to - from) * eased);
+                el.textContent = current + '%';
+                if (progress < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        // ── Error Display ───────────────────────────────
+        function showError(message) {
+            if (message.includes('Failed to fetch') || message.includes('NetworkError')) {
+                errorTitle.textContent = 'Server Not Running';
+                errorMsg.textContent = 'Could not connect to the DocSecure API. Make sure the Flask server is running: python app.py';
+            } else {
+                errorTitle.textContent = 'Analysis Failed';
+                errorMsg.textContent = message;
+            }
+            uploadSection.style.display = 'none';
+            errorContainer.classList.add('visible');
+        }
+
+        // ── Reset UI ────────────────────────────────────
+        function resetUI() {
+            selectedFile = null;
+            fileInput.value = '';
+            fileInfo.classList.remove('visible');
+            analyzeBtn.classList.remove('visible');
+            resultsContainer.classList.remove('visible');
+            errorContainer.classList.remove('visible');
+            loadingOverlay.classList.remove('visible');
+            uploadSection.style.display = '';
+            ringFg.style.strokeDashoffset = 408;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+
+</html>

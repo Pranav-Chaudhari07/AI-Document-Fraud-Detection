@@ -1,23 +1,19 @@
 # Project Logbook  Sem Project
-### **Project Title:** AI Based Document Fraud Detection Web System Using OCR and Deep Learning
+### **Project Title:** AI Based Document Fraud Detection Web System Using Deep Learning
 
 | Sr.No |                           Contents                                    | Date        |
 |-------|-----------------------------------------------------------------------|-------------|
-| 1     | Project Group Formation.                                              |   |
-| 2     | Project Topic Finalization.                                           |   |
-| 3     | Guide suggested to focus on “AI Based Document Fraud Detection Web System Using OCR and Deep Learning” and start with Requirement Gathering, Existing System Study, and discuss project scope and feasibility. |   |
-| 5     | Discussion on Software and Hardware Requirements with guide: Finalized tools, technologies, and platform to be used for the project. |   |
-| 6     | Abstract – Short Summary/Overview of Project prepared.                |   |
-| 7     | Home page design (Basic layout for room listing and search feature).  |   |
-| 8     | Dataset Creation on Kaggle by own.                                   |   |
-| 9     | ML Model Testing                           |   |
-| 10    | Designing and Implementation Progress – 1 / Project Monitoring – 1.   |   |
-| 11    | Implementation Progress-2                                             |   |
-| 12    | Project Interaction - Demo with Guide (Frontend) |    |
-| 13    | Implementation Progress – 3 / Project Monitoring – 2.                 |   |
-| 14    |                |   |
-| 15    |               |   |
-| 16    |               |   |
+| 1 | Project Group Formation | 08/01/2026 – 15/01/2026 |
+| 2 | Project Topic Finalization | 19/01/2026 – 29/01/2026 |
+| 3 | Identified and analyzed the functional and non-functional requirements of the proposed system | 29/01/2026 – 31/01/2026 |
+| 4 | Designed the overall system architecture, workflow, and module interactions | 07/02/2026 – 18/02/2026 |
+| 5 | Implementation Phase – I | 19/02/2026 – 28/02/2026 |
+| 6 | Developed the web interface and integrated core system functionalities. | 01/03/2026 – 09/03/2026 |
+| 7 | Implementation Phase – II | 10/03/2026 – 27/03/2026 |
+| 8 | Implementation Phase – III | 28/03/2026 – 01/04/2026 |
+| 9 | Conducted functional, performance, and validation testing of the complete system | 05/04/2026 – 27/04/2026 |
+| 10 | Evaluated model performance and analyzed the obtained results using relevant metrics | 28/04/2026 – 09/05/2026 |
+| 11 | Prepared the project documentation and summarized the conclusions and future scope | 09/05/2026 – 11/05/2026 |
 
 ---
 # AI-Based Document Fraud Detection Web System Using Deep Learning

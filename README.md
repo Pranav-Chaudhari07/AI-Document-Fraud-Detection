@@ -179,26 +179,6 @@ git clone https://github.com/PLACEHOLDER/AI-Document-Fraud-Detection.git
 cd AI-Document-Fraud-Detection
 ```
 
-### Create Virtual Environment
-
-```bash
-python -m venv venv
-```
-
-### Activate Environment
-
-#### Windows
-
-```bash
-venv\Scripts\activate
-```
-
-#### Linux / macOS
-
-```bash
-source venv/bin/activate
-```
-
 ### Install Dependencies
 
 ```bash
